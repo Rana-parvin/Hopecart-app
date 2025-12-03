@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hopecart/admin/bottom%20navigaton/bottom%20navig.dart';
+import 'package:hopecart/admin/homeadmin.dart';
 import 'package:hopecart/role%20selection/index.dart';
 
 void main() {
@@ -28,9 +30,7 @@ class MyApp extends StatelessWidget {
           secondary:const  Color(0xFFF47C2C),
         ),
       ),
-      home:indexwid(),
+      home:Bottomnavig(),
     );
   }
 }
-
-//milkshakepage()

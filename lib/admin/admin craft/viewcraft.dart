@@ -39,7 +39,7 @@ class _view_craftState extends State<view_craft> {
 
   Future<List<craftclass>> getRequest() async {
     //replace your restFull API here.
-    String url = "http://192.168.172.163/hopephp/craft/viewcraft.php";
+    String url = "http://192.168.39.163/hopephp/craft/viewcraft.php";
 
     final response = await http.get(Uri.parse(url));
 
@@ -213,10 +213,10 @@ class _view_craftState extends State<view_craft> {
                                     border: Border.all(
                                       color: Colors.white,
                                     ),
-                                    // image: DecorationImage(
-                                    //   fit: BoxFit.cover,
-                                    //   image: AssetImage('assets/images/craft1.avif')
-                                    // ),
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(snapshot.data[index].image)
+                                    ),
                                   ),
                                 ),
                                 

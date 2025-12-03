@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hopecart/admin/admin%20craft/viewcraft.dart';
+import 'package:hopecart/admin/admin craft/viewcraft.dart';
 import 'package:hopecart/customfield.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -25,8 +24,8 @@ class _AddcraftState extends State<Addcraft> {
   final namec = TextEditingController();
   final pricec = TextEditingController();
   final descriptionc = TextEditingController();
-
   final formkey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -44,320 +43,268 @@ class _AddcraftState extends State<Addcraft> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: Form(
-          key: formkey,
-          child: Container(
-            margin: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.white,
-                  radius: 60,
-                  child: Stack(
-                    alignment: const Alignment(2.8, -2.5),
-                    children: [
-                      Icon(
-                        Icons.card_giftcard,
-                        color: Theme.of(context).colorScheme.secondary,
-                        size: 40,
-                      ),
-                      Icon(
-                        Icons.add_circle,
-                        color: Theme.of(context).colorScheme.secondary,
-                        size: 23,
-                      ),
-                    ],
-                  ),
-                ),
-                Text(
-                  " Add item",
-                  style: GoogleFonts.openSans(
-                    fontSize: 30,
-                    letterSpacing: 1,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  "Support a good cause",
-                  style: GoogleFonts.nunito(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 1,
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                customfield(
-                  hinttext: "Craft id",
-                  controller: craftidc,
-                  keyboardtype: const TextInputType.numberWithOptions(),
-                  prefixicon: const Icon(Icons.badge),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please give an id";
-                    }
-                    return null;
-                  },
-                  obscuretext: false,
-                ),
-
-                customfield(
-                  hinttext: "Item name",
-                  controller: namec,
-                  prefixicon: const Icon(Icons.edit),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return "Give the name of the item";
-                    }
-                    return null;
-                  },
-                  obscuretext: false,
-                ),
-
-                customfield(
-                  keyboardtype: const TextInputType.numberWithOptions(),
-                  hinttext: "Price",
-                  controller: pricec,
-                  prefixicon: const Icon(Icons.monetization_on),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return "Please enter the price";
-                    }
-                    return null;
-                  },
-                  obscuretext: false,
-                ),
-
-                customfield(
-                  hinttext: "Description",
-                  controller: descriptionc,
-                  prefixicon: const Icon(Icons.description),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return "Please enter a description";
-                    }
-                    return null;
-                  },
-                  obscuretext: false,
-                ),
-
-                const SizedBox(height: 10),
-
-                // IMAGE PICKER
-                Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) {
-                          return ListView(
-                            children: [
-                              ListTile(
-                                leading: const Icon(Icons.photo),
-                                title: const Text("Choose from gallery"),
-                                onTap: () async {
-                                  Navigator.pop(context);
-                                  await chooseImageGallery();
-                                },
-                              ),
-                              ListTile(
-                                leading: const Icon(Icons.camera),
-                                title: const Text("Choose from camera"),
-                                onTap: () async {
-                                  Navigator.pop(context);
-                                  await chooseImageCamera();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    child: Container(
-                      height: 120,
-                      width: 150,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.white,
-                      ),
-                      child: image != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: Image.file(image!, fit: BoxFit.cover),
-                            )
-                          : Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(Icons.upload),
-                                  Expanded(
-                                    child: Text(
-                                      "Upload image",
-                                      style: GoogleFonts.patuaOne(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.secondary,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 25),
-
-                formbutton(
-                  height: screensize / 20,
-                  width: screenwidth / 1.5,
-                  text: 'Add Craft',
-                  onpressed: () async {
-                    if (formkey.currentState!.validate()) {
-                      await addItem();
-                    }
-                  },
-                ),
-              ],
+      body: Stack(
+        children: [
+          // TOP DESIGN HEADER
+          Container(
+            height: screensize * 0.30,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.secondary
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(50),
+                bottomRight: Radius.circular(50),
+              ),
             ),
           ),
-        ),
+
+          // CONTENT
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+              child: Form(
+                key: formkey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Add New Craft",
+                      style: GoogleFonts.poppins(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      "Every craft supports kindness",
+                      style: GoogleFonts.nunito(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white70,
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+
+                    // PICK IMAGE CARD
+                    GestureDetector(
+                      onTap: selectImageOption,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 350),
+                        height: 180,
+                        width: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(25),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.12),
+                              blurRadius: 15,
+                              offset: const Offset(0, 4),
+                            )
+                          ],
+                        ),
+                        child: image == null
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.upload, size: 40, color: Theme.of(context).colorScheme.secondary),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "Upload Image",
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15,
+                                    ),
+                                  )
+                                ],
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(25),
+                                child: Image.file(image!, fit: BoxFit.cover),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+
+                    // FORM CARD
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.10),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          customfield(
+                            hinttext: "Craft ID",
+                            controller: craftidc,
+                            keyboardtype: const TextInputType.numberWithOptions(),
+                            prefixicon: const Icon(Icons.badge),
+                            validator: (value) => value!.isEmpty ? "Required" : null,
+                            obscuretext: false,
+                          ),
+                          customfield(
+                            hinttext: "Item Name",
+                            controller: namec,
+                            prefixicon: const Icon(Icons.edit),
+                            validator: (value) => value!.isEmpty ? "Required" : null,
+                            obscuretext: false,
+                          ),
+                          customfield(
+                            keyboardtype: const TextInputType.numberWithOptions(),
+                            hinttext: "Price",
+                            controller: pricec,
+                            prefixicon: const Icon(Icons.monetization_on),
+                            validator: (value) => value!.isEmpty ? "Required" : null,
+                            obscuretext: false,
+                          ),
+                          customfield(
+                            hinttext: "Description",
+                            controller: descriptionc,
+                            prefixicon: const Icon(Icons.description),
+                            validator: (value) => value!.isEmpty ? "Required" : null,
+                            obscuretext: false,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+
+                    // SUBMIT BUTTON
+                    SizedBox(
+                      height: 55,
+                      width: screenwidth / 1.6,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.secondary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          elevation: 10,
+                        ),
+                        onPressed: isLoading
+                            ? null
+                            : () async {
+                                if (formkey.currentState!.validate()) {
+                                  await addItem();
+                                }
+                              },
+                        child: isLoading
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : Text(
+                                "Add Craft",
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
 
-  // IMAGE PICK FROM GALLERY
+  // IMAGE OPTION POPUP
+  void selectImageOption() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      ),
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.photo),
+            title: const Text("Choose from Gallery"),
+            onTap: () async {
+              Navigator.pop(context);
+              await chooseImageGallery();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.camera),
+            title: const Text("Open Camera"),
+            onTap: () async {
+              Navigator.pop(context);
+              await chooseImageCamera();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Future chooseImageGallery() async {
     try {
       final picked = await picker.pickImage(source: ImageSource.gallery);
-      if (picked == null) {
-        Fluttertoast.showToast(msg: 'No image selected');
-        return;
-      }
-      setState(() => image = File(picked.path));
+      if (picked != null) setState(() => image = File(picked.path));
     } on PlatformException catch (e) {
-      print('Failed to pick image: $e');
+      print("Gallery Error: $e");
     }
   }
 
-  // IMAGE PICK FROM CAMERA
   Future chooseImageCamera() async {
     try {
       final picked = await picker.pickImage(source: ImageSource.camera);
-      if (picked == null) {
-        Fluttertoast.showToast(msg: 'No image selected');
-        return;
-      }
-      setState(() => image = File(picked.path));
+      if (picked != null) setState(() => image = File(picked.path));
     } on PlatformException catch (e) {
-      print('Failed to pick image: $e');
+      print("Camera Error: $e");
     }
   }
 
-  // ADD ITEM FUNCTION
   Future addItem() async {
     if (image == null) {
-      Fluttertoast.showToast(msg: 'Please select an image');
+      Fluttertoast.showToast(msg: "Image required");
       return;
     }
 
-    final craftId = craftidc.text.trim();
-    final name = namec.text.trim();
-    final price = pricec.text.trim();
-    final description = descriptionc.text.trim();
+    setState(() => isLoading = true);
 
-    final uri = Uri.parse("http://192.168.172.163/hopephp/craft/addcraft.php");
-
+    final uri = Uri.parse("http://192.168.39.163/hopephp/craft/addcraft.php");
     var request = http.MultipartRequest('POST', uri);
 
     request.fields.addAll({
-      'craftid': craftId,
-      'name': name,
-      'price': price,
-      'description': description,
+      'craftid': craftidc.text.trim(),
+      'name': namec.text.trim(),
+      'price': pricec.text.trim(),
+      'description': descriptionc.text.trim(),
     });
 
-    try {
-      var pic = await http.MultipartFile.fromPath("image", image!.path);
-      request.files.add(pic);
+    var pic = await http.MultipartFile.fromPath("image", image!.path);
+    request.files.add(pic);
 
-      final streamed = await request.send();
-      final response = await http.Response.fromStream(streamed);
+    final streamed = await request.send();
+    final response = await http.Response.fromStream(streamed);
 
-      print("Server response: ${response.body}");
+    final body = jsonDecode(response.body);
+    setState(() => isLoading = false);
 
-      try {
-        final body = jsonDecode(response.body);
+    Fluttertoast.showToast(msg: body['message']);
 
-        if (body['error'] == false) {
-          Fluttertoast.showToast(msg: body['message']);
-          craftidc.clear();
-          namec.clear();
-          pricec.clear();
-          descriptionc.clear();
-          setState(() => image = null);
-        } else {
-          // ScaffoldMessenger.of(
-          //   context,
-          // ).showSnackBar(SnackBar(content: Text("Craft added successfully")));
-          Fluttertoast.showToast(msg: body['message']);
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => view_craft()),
-          );
-        }
-      } catch (e) {
-        Fluttertoast.showToast(msg: "Server returned invalid response");
-      }
-    } catch (e) {
-      print("Upload error: $e");
-      Fluttertoast.showToast(msg: "Upload failed");
+    if (body['error'] == false) {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => view_craft()));
     }
-  }
-}
-
-// BUTTON WIDGET
-class formbutton extends StatelessWidget {
-  final String text;
-  final double height;
-  final double width;
-  final dynamic Function() onpressed;
-
-  const formbutton({
-    super.key,
-    required this.height,
-    required this.text,
-    required this.width,
-    required this.onpressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      width: width,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        onPressed: onpressed,
-        child: Text(
-          text,
-          style: const TextStyle(color: Colors.white, fontSize: 15),
-        ),
-      ),
-    );
   }
 }

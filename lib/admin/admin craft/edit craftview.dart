@@ -36,7 +36,7 @@ class edit_craft_view extends StatefulWidget {
 class _edit_craft_viewState extends State<edit_craft_view> {
 
   Future<List<craftclass>> viewcrafts() async {
-    String url = "http://192.168.172.163/hopephp/craft/viewcraft.php";
+    String url = "http://192.168.39.163/hopephp/craft/viewcraft.php";
 
     final response = await http.get(Uri.parse(url));
 

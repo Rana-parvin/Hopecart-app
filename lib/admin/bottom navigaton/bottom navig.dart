@@ -21,29 +21,61 @@ class _BottomnavigState extends State<Bottomnavig> {
     Adminvieworder(),
     AdminSetting()
   ];
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      bottomNavigationBar: GNav(
-        curve: Curves.easeInOutCubicEmphasized,
-        color: Theme.of(context).colorScheme.secondary,
-        gap: 8,
-        activeColor: Colors.white,
-        tabBackgroundColor: Theme.of(context).colorScheme.secondary,
-        selectedIndex: selectedindex,
-        onTabChange: (value) {
-          setState(() {
-            selectedindex = value;
-          });
-        },
-        tabs: [
-          GButton(icon: Icons.home_rounded, text: "Home"),
-          GButton(icon: Icons.saved_search_sharp, text: "Explore"),
-          GButton(icon: Icons.notifications_active, text: "Orders"),
-          GButton(icon: Icons.settings, text: "Settings"),
-        ],
-      ),
+      extendBody: true, // makes background visible behind navbar
       body: pages[selectedindex],
+
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(26),
+          child: Container(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.secondary.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(26),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.12),
+                  blurRadius: 16,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: GNav(
+              curve: Curves.fastEaseInToSlowEaseOut,
+              rippleColor: Colors.white.withOpacity(0.25),
+              hoverColor: Colors.white.withOpacity(0.15),
+
+              gap: 10,
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+
+              selectedIndex: selectedindex,
+              onTabChange: (value) {
+                setState(() {
+                  selectedindex = value;
+                });
+              },
+
+              backgroundColor: Colors.transparent,
+              color: theme.colorScheme.secondary,
+              activeColor: Colors.white,
+              tabBackgroundColor: theme.colorScheme.secondary,
+
+              tabs: const [
+                GButton(icon: Icons.home_rounded, text: "Home"),
+                GButton(icon: Icons.explore_rounded, text: "Explore"),
+                GButton(icon: Icons.shopping_bag_rounded, text: "Orders"),
+                GButton(icon: Icons.settings_rounded, text: "Settings"),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

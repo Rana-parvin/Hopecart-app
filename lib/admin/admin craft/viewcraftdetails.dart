@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hopecart/admin/admin%20craft/addcraft.dart';
 import 'package:hopecart/admin/admin%20craft/editcraft.dart';
 import 'package:hopecart/admin/admin%20craft/single%20class.dart';
+import 'package:hopecart/button/formbutton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class a_craft_details extends StatefulWidget {
@@ -92,10 +93,7 @@ class _a_craft_detailsState extends State<a_craft_details> {
                     ),
                     height: 200,
                     width: 220,
-                    child: Image.asset(
-                      "assets/images/meal.jpeg",
-                      fit: BoxFit.fill,
-                    ),
+                    child: Image.network(widget.craft.image,fit: BoxFit.fill,),
                   ),
                 ),
 
